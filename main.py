@@ -18,7 +18,10 @@ if __name__ == '__main__':
     """
     input_file = 'yes.1.gz'
     output_file = 'page.html'
-    os.remove(output_file)
+    try:
+        os.remove(output_file)
+    except FileNotFoundError:
+        pass
     with open(output_file, 'a') as page:
         with gzip.open(input_file) as file:
             parser = ManParser(file, page)
