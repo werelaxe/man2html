@@ -7,7 +7,7 @@ def parse_gzfile(gz_file):
 
 
 def parse_header(string):
-    return "<h2>{}</h2><br>".format(string.replace("\"", ''))
+    return "<h2>{}</h2>".format(string.replace("\"", ''))
 
 
 def parse_bold(string):
@@ -36,6 +36,7 @@ REPL_DICT = dict()
 PARSE_DICT[".SH"] = parse_header
 PARSE_DICT[".B"] = parse_bold
 PARSE_DICT[".P"] = parse_paragraph
+PARSE_DICT[".PP"] = parse_paragraph
 PARSE_DICT[".TH"] = parse_title
 REPL_DICT[r"\-"] = "-"
 REPL_DICT[r"\(aq"] = "\'"
