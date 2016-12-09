@@ -26,7 +26,6 @@ def parse_title(string):
     main_title = "<h2>{}</h2><br>".format(string.split()[0])
     parts = re.findall("\"(.*?)\"", string)
     section = "Section: {}({})<br>".format(parts[-1], parts[0])
-    print(parts)
     updated = "Updated: {}<br>".format(parts[1])
     return main_title + section + updated
 
@@ -48,8 +47,7 @@ class ManParser:
     def __init__(self, gz_file, out_page_file):
         self.source = parse_gzfile(gz_file)
         self.out_page_file = out_page_file
-        self.body = []
-        self.html_page = ""
+        self.body = ["<html>", "<head>", "<title>", "title", "</title>", "</head>", "<body>"]
 
     @staticmethod
     def replace_parts(new_line):
@@ -73,6 +71,8 @@ class ManParser:
                 self.body.append(line + "<br>")
                 continue
             if start in PARSE_DICT.keys():
+                if start == '.TH':
+                    self.body[3] = "Man page of {}".format(line[first_space:].split()[0])
                 new_line = PARSE_DICT[start](line[first_space:])
                 new_line = self.replace_regexps(new_line)
                 new_line = self.replace_parts(new_line)
@@ -80,4 +80,5 @@ class ManParser:
         self.write_page()
 
     def write_page(self):
+        self.body += ["</body>", "</html>"]
         self.out_page_file.write(''.join(self.body))
