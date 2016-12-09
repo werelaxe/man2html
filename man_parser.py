@@ -37,18 +37,14 @@ PARSE_DICT[".SH"] = parse_header
 PARSE_DICT[".B"] = parse_bold
 PARSE_DICT[".P"] = parse_paragraph
 PARSE_DICT[".TH"] = parse_title
-# PARSE_DICT["\\fB\\"] =
 REPL_DICT[r"\-"] = "-"
 REPL_DICT[r"\(aq"] = "\'"
 REPL_DICT[r"\(co"] = "©"
-# REPL_DICT["\\fI\\"] = "<i>"
-# REPL_DICT[r"\fR"] = "</i>"
 REPL_DICT[r"\/"] = "/"
 
 
 class ManParser:
     def __init__(self, gz_file, out_page_file):
-        print(REPL_DICT)
         self.source = parse_gzfile(gz_file)
         self.out_page_file = out_page_file
         self.body = []
@@ -57,26 +53,28 @@ class ManParser:
     @staticmethod
     def replace_parts(new_line):
         for old_part, new_part in REPL_DICT.items():
-            # print(old_part, new_part, new_line, new_line.replace(old_part, new_part))
-            return new_line.replace(old_part, new_part)
+            new_line = new_line.replace(old_part, new_part)
+        return new_line
 
     @staticmethod
     def replace_regexps(line):
         for func_regexp in re_replaces.REGEXP_REPLACE_FUNCS:
             line = func_regexp(line)
+        return line
 
     def parse_man(self):
         for line in self.source.split('\n'):
             first_space = line.find(" ")
             start = line[:first_space]
             if not line.startswith("."):
-                new_line = self.replace_parts(line)
-                # self.replace_regexps(new_line)
-                self.body.append(new_line + "<br>")
+                line = self.replace_regexps(line)
+                line = self.replace_parts(line)
+                self.body.append(line + "<br>")
+                continue
             if start in PARSE_DICT.keys():
                 new_line = PARSE_DICT[start](line[first_space:])
+                new_line = self.replace_regexps(new_line)
                 new_line = self.replace_parts(new_line)
-                # self.replace_regexps(new_line)
                 self.body.append(new_line)
         self.write_page()
 
