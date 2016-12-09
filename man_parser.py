@@ -48,6 +48,7 @@ class ManParser:
         self.source = parse_gzfile(gz_file)
         self.out_page_file = out_page_file
         self.body = ["<html>", "<head>", "<title>", "title", "</title>", "</head>", "<body>"]
+        self.title = 'title'
 
     @staticmethod
     def replace_parts(new_line):
@@ -72,6 +73,7 @@ class ManParser:
                 continue
             if start in PARSE_DICT.keys():
                 if start == '.TH':
+                    self.title = line[first_space:].split()[0]
                     self.body[3] = "Man page of {}".format(line[first_space:].split()[0])
                 new_line = PARSE_DICT[start](line[first_space:])
                 new_line = self.replace_regexps(new_line)

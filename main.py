@@ -16,7 +16,7 @@ if __name__ == '__main__':
     input_file = args["input"]
     output_file = args["output"]
     """
-    input_file = 'yes.1.gz'
+    input_file = 'ls.1.gz'
     output_file = 'page.html'
     try:
         os.remove(output_file)
